@@ -78,7 +78,25 @@ form = """
 
 
 thanks = """
-"Thanks! That's a totally valid sign up!"
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>User Sign-up</title>
+        <style type="text/css">
+            .error {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+    <h1>
+        User Sign-up
+    </h1>
+
+    <div>Thanks %(username)s! That's a totally valid sign up!</div>
+
+    </body>
+</html>
 """
 
 def escape_html(s):
@@ -94,7 +112,7 @@ def valid_password(password):
 
 EMAIL_RE  = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
 def valid_email(email):
-    return email or EMAIL_RE.match(email)
+    return not email or EMAIL_RE.match(email)
 
 
 
@@ -118,7 +136,7 @@ class MainHandler(webapp2.RequestHandler):
 
         input_username = self.request.get('username')
         input_password = self.request.get('password')
-        input_email = self.request.get('email')
+        email = self.request.get('email')
         verified = self.request.get('verified"')
 
         if not valid_username(input_username):
@@ -132,15 +150,14 @@ class MainHandler(webapp2.RequestHandler):
             error_password = "Speak friend and enter"
             have_error = True
 
-        elif input_password != verified:
-            error_verify = "Somebody left their typing fingers at home, didn't they..."
-            have_error = True
+        # elif input_password != verified:
+        #     error_verify = "Somebody left their typing fingers at home, didn't they..."
+        #     have_error = True
 
-        if not valid_email(input_email):
+        if not valid_email(email):
             error_email = "Something seems to be missing @here"
             have_error = True
-        elif valid_email(input_email):
-            email = input_email
+
 
         if have_error:
             self.response.out.write(form % {"error_username": error_username,
@@ -152,14 +169,15 @@ class MainHandler(webapp2.RequestHandler):
                                             })
 
         else:
-            self.redirect("/thanks?username=" + username)
+            self.redirect("/thanks?username=" + input_username)
 
 class ThanksHandler(webapp2.RequestHandler):
 
     def get(self):
         username = self.request.get('username')
+
         if valid_username(username):
-            self.response.out.write(thanks, username = username)
+            self.response.out.write(thanks % {"username": username})
         else:
             self.redirect('/')
 
