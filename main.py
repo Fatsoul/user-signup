@@ -126,7 +126,7 @@ class MainHandler(webapp2.RequestHandler):
             have_error = True
 
         elif valid_username(input_username):
-            username = valid_username(input_username)
+            username = input_username
 
         if not valid_password(input_password):
             error_password = "Speak friend and enter"
@@ -137,8 +137,10 @@ class MainHandler(webapp2.RequestHandler):
             have_error = True
 
         if not valid_email(input_email):
-            error_email = "We won't spam you. Pinky promise."
+            error_email = "Something seems to be missing @here"
             have_error = True
+        elif valid_email(input_email):
+            email = input_email
 
         if have_error:
             self.response.out.write(form % {"error_username": error_username,
@@ -157,7 +159,7 @@ class ThanksHandler(webapp2.RequestHandler):
     def get(self):
         username = self.request.get('username')
         if valid_username(username):
-            self.response.out.write(thanks)
+            self.response.out.write(thanks, username = username)
         else:
             self.redirect('/')
 
