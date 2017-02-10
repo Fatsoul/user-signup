@@ -54,9 +54,9 @@ form = """
                     </td>
                 </tr>
                 <tr>
-                    <td><label for="verify">Verify Password</label></td>
+                    <td><label for="verified">Verify Password</label></td>
                     <td>
-                        <input name="verify" type="password" >
+                        <input name="verified" type="password" >
                         <span class="error">%(error_verify)s</span>
                     </td>
                 </tr>
@@ -137,7 +137,7 @@ class MainHandler(webapp2.RequestHandler):
         input_username = self.request.get('username')
         input_password = self.request.get('password')
         email = self.request.get('email')
-        verified = self.request.get('verified"')
+        verified = self.request.get('verified')
 
         if not valid_username(input_username):
             error_username = "You don't have an identity without a handle!"
@@ -149,10 +149,9 @@ class MainHandler(webapp2.RequestHandler):
         if not valid_password(input_password):
             error_password = "Speak friend and enter"
             have_error = True
-
-        # elif input_password != verified:
-        #     error_verify = "Somebody left their typing fingers at home, didn't they..."
-        #     have_error = True
+        elif input_password != verified:
+             error_verify = "Somebody left their typing fingers at home, didn't they..."
+             have_error = True
 
         if not valid_email(email):
             error_email = "Something seems to be missing @here"
