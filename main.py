@@ -102,7 +102,7 @@ thanks = """
 def escape_html(s):
     return cgi.escape(s, quote = True)
 
-USER_RE = re.compile(r"^[a-zA-Z0-9_-]{1,}$")
+USER_RE = re.compile(r"^.{1,}$")
 def valid_username(username):
     return username and USER_RE.match(username)
 
